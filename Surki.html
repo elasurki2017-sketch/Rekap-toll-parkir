@@ -1,0 +1,2192 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Rekapan Pembayaran Toll Parkir</title>
+
+<style>
+
+/* ================= RESET ================= */
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
+body{
+font-family:Arial, sans-serif;
+background:#ffffff;
+color:#000;
+padding:10px;
+}
+
+
+/* ================= TITLE ================= */
+
+.header-title{
+text-align:center;
+margin-bottom:18px;
+}
+
+.header-title span{
+display:inline-block;
+font-size:13px;
+font-weight:bold;
+padding-bottom:3px;
+border-bottom:1px solid #000;
+}
+
+
+/* ================= IDENTITY ================= */
+
+.identity-box{
+display:inline-block;
+border:1px solid #000;
+padding:8px;
+margin-bottom:18px;
+}
+
+.identity-table{
+border-collapse:collapse;
+font-size:9px;
+font-weight:bold;
+text-transform:uppercase;
+}
+
+.identity-table td{
+padding:4px 6px;
+}
+
+.identity-label{
+min-width:95px;
+white-space:nowrap;
+}
+
+.identity-input{
+border:none;
+border-bottom:1px solid #000;
+outline:none;
+background:transparent;
+font-size:9px;
+font-weight:bold;
+text-transform:uppercase;
+padding:2px;
+width:170px;
+}
+
+.month-select{
+width:110px;
+}
+
+.year-input{
+width:55px;
+}
+
+
+/* ================= MAIN TABLE ================= */
+
+.main-table{
+width:100%;
+border-collapse:collapse;
+font-size:9px;
+margin-bottom:8px;
+}
+
+.main-table th,
+.main-table td{
+border:1px solid #000;
+padding:3px;
+text-align:center;
+vertical-align:middle;
+}
+
+.main-table th{
+background:#FFD966;
+font-weight:bold;
+}
+
+.col-date{
+width:70px;
+}
+
+.col-no{
+width:32px;
+}
+
+.col-action{
+width:70px;
+}
+
+
+/* ================= INPUT ================= */
+
+.cell-input{
+width:100%;
+border:none;
+outline:none;
+background:transparent;
+font-size:9px;
+text-align:center;
+padding:2px;
+}
+
+.total-input{
+background:#f6f6f6;
+}
+
+
+/* ================= BUTTON ================= */
+
+.action-btn{
+background:none;
+border:none;
+cursor:pointer;
+padding:2px;
+margin:0 2px;
+}
+
+.action-btn svg{
+width:15px;
+height:15px;
+stroke:black;
+stroke-width:1.8;
+fill:none;
+}
+
+
+/* ================= ADD ROW ================= */
+
+.add-row-area{
+text-align:right;
+margin-bottom:18px;
+}
+
+#btnAddRow{
+border:1px solid #000;
+background:white;
+padding:4px 10px;
+font-size:9px;
+cursor:pointer;
+}
+
+
+/* ================= TOTAL TABLE ================= */
+
+.total-box{
+width:250px;
+}
+
+.total-table{
+width:100%;
+border-collapse:collapse;
+font-size:9px;
+font-weight:bold;
+}
+
+.total-table td{
+border:1px solid #000;
+padding:6px;
+}
+
+.total-label{
+width:150px;
+}
+
+.total-value{
+text-align:right;
+}
+
+
+/* ================= MOBILE ================= */
+
+@media(max-width:600px){
+
+body{
+padding:6px;
+}
+
+.identity-input{
+width:130px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+
+
+<!-- ================= TITLE ================= -->
+
+<div class="header-title">
+
+<span>
+
+REKAPAN PEMBAYARAN TOLL PARKIR
+
+</span>
+
+</div>
+
+
+
+<!-- ================= IDENTITY ================= -->
+
+<div class="identity-box">
+
+<table class="identity-table">
+
+<tr>
+<td class="identity-label">USER</td>
+<td>:</td>
+<td>
+<input
+id="user"
+type="text"
+class="identity-input">
+</td>
+</tr>
+
+
+<tr>
+<td class="identity-label">DRIVER</td>
+<td>:</td>
+<td>
+<input
+id="driver"
+type="text"
+class="identity-input">
+</td>
+</tr>
+
+
+<tr>
+<td class="identity-label">PLAT NUMBER</td>
+<td>:</td>
+<td>
+<input
+id="plat"
+type="text"
+class="identity-input">
+</td>
+</tr>
+
+
+<tr>
+<td class="identity-label">PERIODE</td>
+<td>:</td>
+<td>
+
+<select
+id="month"
+class="identity-input month-select">
+
+<option value="">MONTH</option>
+
+<option>JANUARY</option>
+<option>FEBRUARY</option>
+<option>MARCH</option>
+<option>APRIL</option>
+<option>MAY</option>
+<option>JUNE</option>
+<option>JULY</option>
+<option>AUGUST</option>
+<option>SEPTEMBER</option>
+<option>OCTOBER</option>
+<option>NOVEMBER</option>
+<option>DECEMBER</option>
+
+</select>
+
+
+<input
+id="year"
+type="text"
+inputmode="numeric"
+maxlength="4"
+class="identity-input year-input"
+
+oninput="
+
+this.value=
+this.value
+.replace(/[^0-9]/g,'')
+.slice(0,4)
+
+">
+
+</td>
+</tr>
+
+</table>
+
+</div>
+
+
+
+<!-- ================= DATA TABLE ================= -->
+
+<table class="main-table">
+
+<thead>
+
+<tr>
+
+<th rowspan="2" class="col-date">
+
+Date
+
+</th>
+
+<th rowspan="2" class="col-no">
+
+No.
+
+</th>
+
+<th colspan="2">
+
+Highway
+
+</th>
+
+<th rowspan="2">
+
+Parking Loc
+
+</th>
+
+<th rowspan="2">
+
+Flazz BCA
+
+</th>
+
+<th rowspan="2">
+
+Cash
+
+</th>
+
+<th rowspan="2">
+
+Total
+
+</th>
+
+<th rowspan="2">
+
+KM
+
+</th>
+
+<th rowspan="2" class="col-action">
+
+Aksi
+
+</th>
+
+</tr>
+
+
+<tr>
+
+<th>Start</th>
+
+<th>Arrive</th>
+
+</tr>
+
+</thead>
+
+
+
+<tbody id="tableBody">
+
+<tr class="data-row">
+
+<td>
+
+<input
+type="date"
+class="cell-input date-input">
+
+</td>
+
+<td>
+
+<input
+type="text"
+class="cell-input no-input"
+readonly>
+
+</td>
+
+<td>
+
+<input
+type="text"
+class="cell-input">
+
+</td>
+
+<td>
+
+<input
+type="text"
+class="cell-input">
+
+</td>
+
+<td>
+
+<input
+type="text"
+class="cell-input">
+
+</td>
+
+<td>
+
+<input
+type="number"
+class="cell-input flazz-input">
+
+</td>
+
+<td>
+
+<input
+type="number"
+class="cell-input cash-input">
+
+</td>
+
+<td>
+
+<input
+type="text"
+class="cell-input total-input"
+readonly>
+
+</td>
+
+<td>
+
+<input
+type="number"
+class="cell-input">
+
+</td>
+
+<td class="action-cell">
+
+<!-- icon inject JS -->
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+
+
+<!-- ================= ADD ROW ================= -->
+
+<div class="add-row-area">
+
+<button id="btnAddRow">
+
++ ADD ROW
+
+</button>
+
+</div>
+
+
+
+<!-- ================= TOTAL TABLE ================= -->
+
+<div class="total-box">
+
+<table class="total-table">
+
+<tr>
+
+<td class="total-label">
+
+TOTAL FLAZZ BCA
+
+</td>
+
+<td id="totalFlazz"
+class="total-value">
+
+0
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td class="total-label">
+
+TOTAL CASH
+
+</td>
+
+<td id="totalCash"
+class="total-value">
+
+0
+
+</td>
+
+</tr>
+
+
+<tr>
+
+<td class="total-label">
+
+TOTAL PEMBAYARAN
+
+</td>
+
+<td id="grandTotal"
+class="total-value">
+
+0
+
+</td>
+
+</tr>
+
+</table>
+
+</div>
+<script>
+
+/* ================= ICON SVG ================= */
+
+const saveIcon = `
+
+<svg viewBox="0 0 24 24">
+<path d="M5 3h11l3 3v15H5z"/>
+<path d="M8 3v6h8V3"/>
+</svg>
+
+`;
+
+const editIcon = `
+
+<svg viewBox="0 0 24 24">
+<path d="M4 20l4-1 10-10-3-3L5 16z"/>
+<path d="M14 5l3 3"/>
+</svg>
+
+`;
+
+const deleteIcon = `
+
+<svg viewBox="0 0 24 24">
+<path d="M4 7h16"/>
+<path d="M10 11v6"/>
+<path d="M14 11v6"/>
+<path d="M6 7l1 13h10l1-13"/>
+<path d="M9 7V4h6v3"/>
+</svg>
+
+`;
+
+
+
+/* ================= UPPERCASE IDENTITY ================= */
+
+["user","driver","plat"]
+
+.forEach(id=>{
+
+document
+
+.getElementById(id)
+
+.addEventListener(
+
+"input",
+
+function(){
+
+this.value =
+
+this.value.toUpperCase();
+
+
+if(
+
+typeof saveStorage === "function"
+
+){
+
+saveStorage();
+
+}
+
+}
+
+);
+
+});
+
+
+
+/* ================= VALIDATION ================= */
+
+function validateIdentity(){
+
+let user =
+
+document
+.getElementById("user")
+.value.trim();
+
+let driver =
+
+document
+.getElementById("driver")
+.value.trim();
+
+let plat =
+
+document
+.getElementById("plat")
+.value.trim();
+
+let month =
+
+document
+.getElementById("month")
+.value.trim();
+
+let year =
+
+document
+.getElementById("year")
+.value.trim();
+
+
+
+if(
+
+user==="" ||
+
+driver==="" ||
+
+plat==="" ||
+
+month==="" ||
+
+year===""
+
+){
+
+alert(
+
+"Lengkapi data identitas terlebih dahulu"
+
+);
+
+return false;
+
+}
+
+return true;
+
+}
+
+
+
+/* ================= LOCK ROW ================= */
+
+function lockRow(row){
+
+let inputs =
+
+row.querySelectorAll("input");
+
+
+inputs.forEach(input=>{
+
+if(
+
+!input.classList.contains("total-input")
+
+){
+
+input.readOnly = true;
+
+}
+
+});
+
+
+row.dataset.locked = "true";
+
+}
+
+
+
+/* ================= UNLOCK ROW ================= */
+
+function unlockRow(row){
+
+let inputs =
+
+row.querySelectorAll("input");
+
+
+inputs.forEach(input=>{
+
+if(
+
+!input.classList.contains("total-input")
+
+){
+
+input.readOnly = false;
+
+}
+
+});
+
+
+row.dataset.locked = "false";
+
+}
+
+
+
+/* ================= CREATE ACTION ================= */
+
+function actionSave(){
+
+return `
+
+<button
+class="action-btn"
+onclick="saveRow(this)">
+
+${saveIcon}
+
+</button>
+
+`;
+
+}
+
+
+function actionEditDelete(){
+
+return `
+
+<button
+class="action-btn"
+onclick="editRow(this)">
+
+${editIcon}
+
+</button>
+
+<button
+class="action-btn"
+onclick="deleteRow(this)">
+
+${deleteIcon}
+
+</button>
+
+`;
+
+}
+
+
+
+/* ================= SAVE ================= */
+
+function saveRow(button){
+
+let row =
+
+button.closest("tr");
+
+
+let date =
+
+row.children[0]
+.querySelector("input")
+.value;
+
+
+if(
+
+!validateIdentity()
+
+){
+
+return;
+
+}
+
+
+if(date===""){
+
+alert(
+
+"Date wajib diisi"
+
+);
+
+return;
+
+}
+
+
+lockRow(row);
+
+
+row.querySelector(
+
+".action-cell"
+
+).innerHTML =
+
+actionEditDelete();
+
+
+/* trigger recalculate */
+
+recalculateTable();
+
+
+setTimeout(function(){
+
+if(
+
+typeof saveStorage === "function"
+
+){
+
+saveStorage();
+
+}
+
+},30);
+
+}
+
+
+
+/* ================= EDIT ================= */
+
+function editRow(button){
+
+let row =
+
+button.closest("tr");
+
+
+unlockRow(row);
+
+
+row.querySelector(
+
+".action-cell"
+
+).innerHTML =
+
+actionSave();
+
+
+if(
+
+typeof saveStorage === "function"
+
+){
+
+saveStorage();
+
+}
+
+}
+
+
+
+/* ================= DELETE ================= */
+
+function deleteRow(button){
+
+let row =
+
+button.closest("tr");
+
+
+if(
+
+confirm("Hapus data ini ?")
+
+){
+
+row.remove();
+
+
+let rows =
+
+document.querySelectorAll(
+
+"#tableBody tr"
+
+);
+
+
+/* jangan kosong */
+
+if(
+
+rows.length===0
+
+){
+
+let tbody =
+
+document
+.getElementById(
+"tableBody"
+);
+
+tbody.innerHTML = "";
+
+appendNewRow();
+
+}
+
+
+/* update */
+
+recalculateTable();
+
+
+if(
+
+typeof saveStorage === "function"
+
+){
+
+saveStorage();
+
+}
+
+}
+
+}
+
+
+
+/* ================= CREATE ROW HTML ================= */
+
+function createRow(){
+
+return `
+
+<tr class="data-row">
+
+<td>
+<input
+type="date"
+class="cell-input date-input">
+</td>
+
+<td>
+<input
+type="text"
+class="cell-input no-input"
+readonly>
+</td>
+
+<td>
+<input
+type="text"
+class="cell-input">
+</td>
+
+<td>
+<input
+type="text"
+class="cell-input">
+</td>
+
+<td>
+<input
+type="text"
+class="cell-input">
+</td>
+
+<td>
+<input
+type="number"
+class="cell-input flazz-input">
+</td>
+
+<td>
+<input
+type="number"
+class="cell-input cash-input">
+</td>
+
+<td>
+<input
+type="text"
+class="cell-input total-input"
+readonly>
+</td>
+
+<td>
+<input
+type="number"
+class="cell-input">
+</td>
+
+<td class="action-cell">
+
+${saveIcon ? actionSave() : ""}
+
+</td>
+
+</tr>
+
+`;
+
+}
+
+
+
+/* ================= APPEND ROW ================= */
+
+function appendNewRow(){
+
+let tbody =
+
+document
+.getElementById(
+"tableBody"
+);
+
+
+tbody.insertAdjacentHTML(
+
+"beforeend",
+
+createRow()
+
+);
+
+
+let rows =
+
+document.querySelectorAll(
+
+"#tableBody tr"
+
+);
+
+
+let lastRow =
+
+rows[rows.length-1];
+
+
+/* attach logic */
+
+attachRowEvents(lastRow);
+
+
+/* save */
+
+if(
+
+typeof saveStorage === "function"
+
+){
+
+saveStorage();
+
+}
+
+}
+
+
+
+/* ================= BUTTON ADD ================= */
+
+document
+
+.getElementById(
+
+"btnAddRow"
+
+)
+
+.addEventListener(
+
+"click",
+
+function(){
+
+appendNewRow();
+
+}
+
+);
+
+
+
+/* ================= INIT FIRST ROW ================= */
+
+window.addEventListener(
+
+"load",
+
+function(){
+
+let firstAction =
+
+document.querySelector(
+
+".action-cell"
+
+);
+
+
+if(firstAction){
+
+firstAction.innerHTML =
+
+actionSave();
+
+}
+
+});
+
+</script>
+<script>
+
+/* ================= HELPER ================= */
+
+function toNumber(val){
+
+if(!val) return 0;
+
+return Number(val) || 0;
+
+}
+
+
+function formatNumber(n){
+
+return Number(n)
+
+.toLocaleString(
+
+"id-ID"
+
+);
+
+}
+
+
+
+/* ================= UPDATE SUMMARY ================= */
+
+function updateSummary(){
+
+let rows =
+
+document.querySelectorAll(
+
+"#tableBody tr"
+
+);
+
+
+let totalFlazz = 0;
+let totalCash = 0;
+let totalPayment = 0;
+
+
+rows.forEach(row=>{
+
+let flazz =
+
+toNumber(
+
+row.children[5]
+.querySelector("input")
+.value
+
+);
+
+
+let cash =
+
+toNumber(
+
+row.children[6]
+.querySelector("input")
+.value
+
+);
+
+
+let total =
+
+toNumber(
+
+row.children[7]
+.querySelector("input")
+.value
+
+);
+
+
+totalFlazz += flazz;
+totalCash += cash;
+totalPayment += total;
+
+});
+
+
+document
+.getElementById("totalFlazz")
+.innerText =
+
+formatNumber(totalFlazz);
+
+
+document
+.getElementById("totalCash")
+.innerText =
+
+formatNumber(totalCash);
+
+
+document
+.getElementById("grandTotal")
+.innerText =
+
+formatNumber(totalPayment);
+
+}
+
+
+
+/* ================= RECALCULATE TABLE ================= */
+
+function recalculateTable(){
+
+let rows =
+
+[
+
+...document.querySelectorAll(
+
+"#tableBody tr"
+
+)
+
+];
+
+
+/* reset semua */
+
+rows.forEach(row=>{
+
+let dateInput =
+
+row.children[0]
+.querySelector("input");
+
+let noInput =
+
+row.children[1]
+.querySelector("input");
+
+let totalInput =
+
+row.children[7]
+.querySelector("input");
+
+
+/* tampilkan kembali */
+
+dateInput.style.visibility =
+
+"visible";
+
+dateInput.style.height =
+
+"auto";
+
+dateInput.style.pointerEvents =
+
+"auto";
+
+
+/* reset */
+
+noInput.value = "";
+
+totalInput.value = "";
+
+});
+
+
+/* grouping */
+
+let groups = {};
+
+
+/* kelompok date */
+
+rows.forEach(row=>{
+
+let date =
+
+row.children[0]
+.querySelector("input")
+.value;
+
+
+if(date==="") return;
+
+
+if(!groups[date]){
+
+groups[date] = [];
+
+}
+
+
+groups[date].push(row);
+
+});
+
+
+/* proses tiap date */
+
+Object.keys(groups)
+
+.forEach(date=>{
+
+let group =
+
+groups[date];
+
+
+let totalDate = 0;
+
+
+/* loop row */
+
+group.forEach(
+
+(row,index)=>{
+
+
+/* nomor */
+
+row.children[1]
+
+.querySelector("input")
+
+.value = index + 1;
+
+
+/* total */
+
+let flazz =
+
+toNumber(
+
+row.children[5]
+.querySelector("input")
+.value
+
+);
+
+
+let cash =
+
+toNumber(
+
+row.children[6]
+.querySelector("input")
+.value
+
+);
+
+
+totalDate +=
+
+(flazz + cash);
+
+
+/* sembunyikan date selain pertama */
+
+if(index > 0){
+
+let dateInput =
+
+row.children[0]
+.querySelector("input");
+
+
+dateInput.style.visibility =
+
+"hidden";
+
+dateInput.style.height =
+
+"0px";
+
+dateInput.style.pointerEvents =
+
+"none";
+
+}
+
+});
+
+
+/* total hanya row terakhir */
+
+let lastRow =
+
+group[
+
+group.length - 1
+
+];
+
+
+lastRow.children[7]
+
+.querySelector("input")
+
+.value = totalDate;
+
+});
+
+
+updateSummary();
+
+}
+
+
+
+/* ================= INPUT EVENT ================= */
+
+function attachRowEvents(row){
+
+let inputs =
+
+row.querySelectorAll("input");
+
+
+inputs.forEach(input=>{
+
+
+/* recalculate untuk date/flazz/cash */
+
+input.addEventListener(
+
+"input",
+
+function(){
+
+recalculateTable();
+
+
+if(
+
+typeof saveStorage==="function"
+
+){
+
+saveStorage();
+
+}
+
+}
+
+);
+
+
+input.addEventListener(
+
+"change",
+
+function(){
+
+recalculateTable();
+
+
+if(
+
+typeof saveStorage==="function"
+
+){
+
+saveStorage();
+
+}
+
+}
+
+);
+
+});
+
+}
+
+
+
+/* ================= INIT ALL ROWS ================= */
+
+function initAllRows(){
+
+let rows =
+
+document.querySelectorAll(
+
+"#tableBody tr"
+
+);
+
+
+rows.forEach(row=>{
+
+attachRowEvents(row);
+
+});
+
+}
+
+
+
+/* ================= START ================= */
+
+window.addEventListener(
+
+"load",
+
+function(){
+
+initAllRows();
+
+recalculateTable();
+
+});
+
+</script>
+<script>
+
+/* ================= STORAGE STATE ================= */
+
+let activePeriod = "";
+let changingPeriod = false;
+
+
+/* ================= PERIOD KEY ================= */
+
+function getPeriodKey(){
+
+let month =
+
+document
+.getElementById("month")
+.value;
+
+let year =
+
+document
+.getElementById("year")
+.value;
+
+
+if(
+
+month==="" ||
+
+year===""
+
+){
+
+return null;
+
+}
+
+
+return "payment_" +
+
+month +
+
+"_" +
+
+year;
+
+}
+
+
+
+/* ================= SAVE STORAGE ================= */
+
+function saveStorage(){
+
+let key =
+
+getPeriodKey();
+
+if(!key) return;
+
+
+let data = {
+
+identity : {
+
+user :
+
+document
+.getElementById("user")
+.value,
+
+driver :
+
+document
+.getElementById("driver")
+.value,
+
+plat :
+
+document
+.getElementById("plat")
+.value,
+
+month :
+
+document
+.getElementById("month")
+.value,
+
+year :
+
+document
+.getElementById("year")
+.value
+
+},
+
+rows : []
+
+};
+
+
+
+let rows =
+
+document.querySelectorAll(
+
+"#tableBody tr"
+
+);
+
+
+
+rows.forEach(row=>{
+
+let item = {
+
+date :
+
+row.children[0]
+.querySelector("input")
+.value,
+
+no :
+
+row.children[1]
+.querySelector("input")
+.value,
+
+start :
+
+row.children[2]
+.querySelector("input")
+.value,
+
+arrive :
+
+row.children[3]
+.querySelector("input")
+.value,
+
+parking :
+
+row.children[4]
+.querySelector("input")
+.value,
+
+flazz :
+
+row.children[5]
+.querySelector("input")
+.value,
+
+cash :
+
+row.children[6]
+.querySelector("input")
+.value,
+
+total :
+
+row.children[7]
+.querySelector("input")
+.value,
+
+km :
+
+row.children[8]
+.querySelector("input")
+.value,
+
+locked :
+
+row.dataset.locked === "true"
+
+};
+
+
+data.rows.push(item);
+
+});
+
+
+localStorage.setItem(
+
+key,
+
+JSON.stringify(data)
+
+);
+
+
+/* simpan periode terakhir */
+
+localStorage.setItem(
+
+"last_period",
+
+key
+
+);
+
+
+activePeriod = key;
+
+}
+
+
+
+/* ================= LOAD STORAGE ================= */
+
+function loadStorage(key){
+
+let raw =
+
+localStorage.getItem(key);
+
+if(!raw) return;
+
+
+let data =
+
+JSON.parse(raw);
+
+
+/* identity */
+
+document
+.getElementById("user")
+.value = data.identity.user;
+
+document
+.getElementById("driver")
+.value = data.identity.driver;
+
+document
+.getElementById("plat")
+.value = data.identity.plat;
+
+document
+.getElementById("month")
+.value = data.identity.month;
+
+document
+.getElementById("year")
+.value = data.identity.year;
+
+
+/* reset tbody */
+
+let tbody =
+
+document
+.getElementById(
+"tableBody"
+);
+
+tbody.innerHTML = "";
+
+
+/* build rows */
+
+data.rows.forEach(()=>{
+
+tbody.insertAdjacentHTML(
+
+"beforeend",
+
+createRow()
+
+);
+
+});
+
+
+let rows =
+
+document.querySelectorAll(
+
+"#tableBody tr"
+
+);
+
+
+/* restore value */
+
+rows.forEach(
+
+(row,index)=>{
+
+let item =
+
+data.rows[index];
+
+
+row.children[0]
+.querySelector("input")
+.value = item.date;
+
+row.children[1]
+.querySelector("input")
+.value = item.no;
+
+row.children[2]
+.querySelector("input")
+.value = item.start;
+
+row.children[3]
+.querySelector("input")
+.value = item.arrive;
+
+row.children[4]
+.querySelector("input")
+.value = item.parking;
+
+row.children[5]
+.querySelector("input")
+.value = item.flazz;
+
+row.children[6]
+.querySelector("input")
+.value = item.cash;
+
+row.children[7]
+.querySelector("input")
+.value = item.total;
+
+row.children[8]
+.querySelector("input")
+.value = item.km;
+
+
+/* attach event */
+
+attachRowEvents(row);
+
+
+/* restore lock */
+
+if(item.locked){
+
+lockRow(row);
+
+row.querySelector(
+
+".action-cell"
+
+).innerHTML =
+
+actionEditDelete();
+
+}
+
+}
+
+);
+
+
+/* update */
+
+recalculateTable();
+
+activePeriod = key;
+
+}
+
+
+
+/* ================= PERIOD CHANGE ================= */
+
+function handlePeriodChange(){
+
+if(changingPeriod) return;
+
+
+let newKey =
+
+getPeriodKey();
+
+if(!newKey) return;
+
+
+/* pertama */
+
+if(
+
+activePeriod===""
+
+){
+
+activePeriod = newKey;
+
+return;
+
+}
+
+
+/* jika beda */
+
+if(
+
+newKey !== activePeriod
+
+){
+
+let yes = confirm(
+
+"Periode berubah.\n\nLoad data periode ini ?"
+
+);
+
+
+/* LOAD */
+
+if(yes){
+
+if(
+
+localStorage.getItem(newKey)
+
+){
+
+loadStorage(newKey);
+
+}
+
+else{
+
+/* periode baru */
+
+let tbody =
+
+document
+.getElementById(
+"tableBody"
+);
+
+tbody.innerHTML = "";
+
+appendNewRow();
+
+recalculateTable();
+
+saveStorage();
+
+activePeriod = newKey;
+
+}
+
+}
+
+
+/* CANCEL */
+
+else{
+
+changingPeriod = true;
+
+
+let split =
+
+activePeriod
+
+.replace(
+
+"payment_",
+
+""
+
+)
+
+.split("_");
+
+
+document
+.getElementById("month")
+.value = split[0];
+
+document
+.getElementById("year")
+.value = split[1];
+
+
+changingPeriod = false;
+
+}
+
+}
+
+}
+
+
+
+/* ================= PERIOD EVENT ================= */
+
+document
+.getElementById("month")
+
+.addEventListener(
+
+"change",
+
+handlePeriodChange
+
+);
+
+
+document
+.getElementById("year")
+
+.addEventListener(
+
+"input",
+
+handlePeriodChange
+
+);
+
+
+
+document
+.getElementById("month")
+
+.addEventListener(
+
+"change",
+
+function(){
+
+saveStorage();
+
+}
+
+);
+
+
+document
+.getElementById("year")
+
+.addEventListener(
+
+"input",
+
+function(){
+
+saveStorage();
+
+}
+
+);
+
+
+
+/* ================= AUTO LOAD ================= */
+
+window.addEventListener(
+
+"load",
+
+function(){
+
+let last =
+
+localStorage.getItem(
+
+"last_period"
+
+);
+
+
+if(last){
+
+loadStorage(last);
+
+}
+
+});
+
+</script>
+
+</body>
+</html>
